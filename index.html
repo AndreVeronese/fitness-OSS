@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>FITNESS OS</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0d10">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Apple / Safari standalone -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FITNESS OS">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<!-- evita flash branco antes do CSS carregar -->
+<style>html,body{background:#0b0d10;}
+html.is-standalone body{ /* reservado para ajustes finos quando instalado, se necessário */ }
+</style>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>FITNESS OS</h1>
+    <p class="greet" id="greetText">Olá</p>
+  </header>
+  <main>
+    <div class="tab active" id="tab-home"></div>
+    <div class="tab" id="tab-diario"></div>
+    <div class="tab" id="tab-peso"></div>
+    <div class="tab" id="tab-treino"></div>
+    <div class="tab" id="tab-analise"></div>
+  </main>
+  <nav>
+    <button data-tab="home" class="active"><span class="ic">🏠</span>Home</button>
+    <button data-tab="diario"><span class="ic">🍽️</span>Diário</button>
+    <button data-tab="peso"><span class="ic">⚖️</span>Peso</button>
+    <button data-tab="treino"><span class="ic">🏋️</span>Treino</button>
+    <button data-tab="analise"><span class="ic">📊</span>Análise</button>
+  </nav>
+</div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBody"></div></div>
+
+<script src="js/storage.js"></script>
+<script src="js/platform.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
