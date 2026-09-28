@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>FITNESS OS</title>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0d10">
+<meta name="format-detection" content="telephone=no">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FITNESS OS">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<style>
+html,body{background:#0b0d10;}
+:root{
+  --bg:#0b0d10; --card:#15181c; --card2:#1b1f24; --line:#262b31;
+  --text:#eef1f3; --sub:#8b939c; --accent:#4fd1a5; --accent2:#5b8cff;
+  --warn:#f5b942; --danger:#ef5b5b; --radius:14px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;}
+#app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;}
+header{padding:18px 16px 8px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;}
+header h1{font-size:13px;letter-spacing:2px;color:var(--sub);margin:0 0 2px;font-weight:600;}
+header .greet{font-size:20px;font-weight:700;margin:0;}
+main{flex:1;padding:8px 16px 90px;overflow-x:hidden;}
+.tab{display:none;}
+.tab.active{display:block;animation:fade .2s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;}
+.card h3{margin:0 0 10px;font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.metric{background:var(--card2);border-radius:10px;padding:10px 12px;}
+.metric .v{font-size:19px;font-weight:700;}
+.metric .l{font-size:11px;color:var(--sub);margin-top:2px;}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px;}
+.bar > div{height:100%;background:var(--accent);}
+.bar.over > div{background:var(--danger);}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+.row:last-child{border-bottom:none;}
+.row .sub{color:var(--sub);font-size:12px;}
+button{font-family:inherit;cursor:pointer;}
+.btn{background:var(--accent);color:#062018;border:none;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;width:100%;}
+.btn.secondary{background:var(--card2);color:var(--text);border:1px solid var(--line);}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line);}
+input,select{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14px;width:100%;margin-bottom:8px;}
+label{font-size:12px;color:var(--sub);display:block;margin-bottom:4px;}
+.chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.chip.high{background:#3a1516;color:var(--danger);}
+.chip.med{background:#3a2e12;color:var(--warn);}
+.chip.low{background:#123a2a;color:var(--accent);}
+.insight{border-left:3px solid var(--line);padding:8px 0 8px 12px;margin-bottom:10px;font-size:13.5px;line-height:1.45;}
+.insight.high{border-color:var(--danger);} .insight.med{border-color:var(--warn);} .insight.pos{border-color:var(--accent);}
+.insight b{display:block;font-size:11px;letter-spacing:.5px;margin-bottom:3px;text-transform:uppercase;}
+.insight.high b{color:var(--danger);} .insight.med b{color:var(--warn);} .insight.pos b{color:var(--accent);}
+svg{width:100%;height:110px;display:block;}
+nav{position:sticky;bottom:0;background:rgba(21,24,28,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+  display:flex;padding-bottom:env(safe-area-inset-bottom,0px);}
+nav button{flex:1;background:none;border:none;color:var(--sub);font-size:10.5px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:44px;}
+nav button.active{color:var(--accent);}
+nav .ic{font-size:18px;}
+.empty{color:var(--sub);font-size:13px;text-align:center;padding:20px 0;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:50;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--card);width:100%;max-width:480px;margin:0 auto;border-radius:18px 18px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow-y:auto;}
+.modal h2{margin:0 0 12px;font-size:16px;}
+.close{float:right;color:var(--sub);background:none;border:none;font-size:18px;}
+.smallbtnrow{display:flex;gap:8px;}
+.tag{font-size:11px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--sub);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>FITNESS OS</h1>
+    <p class="greet" id="greetText">Olá</p>
+  </header>
+  <main>
+    <div class="tab active" id="tab-home"></div>
+    <div class="tab" id="tab-diario"></div>
+    <div class="tab" id="tab-peso"></div>
+    <div class="tab" id="tab-treino"></div>
+    <div class="tab" id="tab-analise"></div>
+  </main>
+  <nav>
+    <button data-tab="home" class="active"><span class="ic">🏠</span>Home</button>
+    <button data-tab="diario"><span class="ic">🍽️</span>Diário</button>
+    <button data-tab="peso"><span class="ic">⚖️</span>Peso</button>
+    <button data-tab="treino"><span class="ic">🏋️</span>Treino</button>
+    <button data-tab="analise"><span class="ic">📊</span>Análise</button>
+  </nav>
+</div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBody"></div></div>
+
+<script>
+
+
+/* ===== storage.js ===== */
+/* ==========================================================
+   StorageProvider
+   Abstração sobre o armazenamento local do app.
+   Hoje: implementado com localStorage (Web/WKWebView).
+   Futuro: pode ser substituído por SQLite nativo (ex.: plugin
+   @capacitor-community/sqlite ou @capacitor/preferences) sem
+   alterar nenhuma outra parte do app — basta reimplementar
+   estes 4 métodos com a mesma assinatura.
+   ========================================================== */
+/* ==========================================================
+   Captura global de erros (item 9 da auditoria).
+   Sempre loga no console. Mostra um aviso pequeno e discreto,
+   que desaparece sozinho — nunca uma tela de erro permanente.
+   ========================================================== */
+window.onerror = function(message, source, lineno, colno, error){
+  console.error('[FITNESS OS] Erro não tratado:', message, 'em', (source||'')+':'+lineno+':'+colno, error);
+  try{
+    if(document.getElementById('fos-error-toast')) return false; // já existe um visível
+    const t = document.createElement('div');
+    t.id = 'fos-error-toast';
+    t.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(78px + env(safe-area-inset-bottom,0px));'
+      +'background:#3a1516;color:#ef5b5b;border:1px solid #522;border-radius:10px;padding:8px 12px;'
+      +'font:12px -apple-system,sans-serif;z-index:9999;opacity:0.95;';
+    t.textContent = 'Algo deu errado nesta ação. Seus dados continuam salvos.';
+    document.body.appendChild(t);
+    setTimeout(()=>{ t.remove(); }, 4000);
+  }catch(e){ /* nunca deixar o handler de erro gerar outro erro */ }
+  return false;
+};
+
+window.StorageProvider = {
+  get(key) {
+    try { return localStorage.getItem(key); }
+    catch (e) { console.error('StorageProvider.get falhou:', e); return null; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(key, value); return true; }
+    catch (e) { console.error('StorageProvider.set falhou:', e); return false; }
+  },
+  remove(key) {
+    try { localStorage.removeItem(key); return true; }
+    catch (e) { console.error('StorageProvider.remove falhou:', e); return false; }
+  },
+  clear() {
+    try { localStorage.clear(); return true; }
+    catch (e) { console.error('StorageProvider.clear falhou:', e); return false; }
+  }
+};
+
+/* ==========================================================
+   Utilitário de data LOCAL (corrige bug de timezone).
+   NUNCA usar new Date().toISOString().slice(0,10) para
+   determinar "o dia de hoje" do usuário — isso usa o fuso UTC
+   e pode registrar o evento no dia errado perto da meia-noite
+   no horário do Brasil (UTC-3). Esta função usa os componentes
+   locais do aparelho (getFullYear/getMonth/getDate).
+   ========================================================== */
+function localDateString(d) {
+  d = d || new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+// alias mantido por compatibilidade com o restante do app
+function getLocalDateString(d) { return localDateString(d); }
+
+/* ===== platform.js ===== */
+/* ==========================================================
+   PlatformProvider
+   Camada conceitual para não prender o app ao navegador.
+   NENHUMA integração nativa é feita nesta etapa (sem HealthKit,
+   sem câmera, sem scanner, sem notificações) — apenas a
+   abstração que permitirá plugar um IOSProvider real no futuro,
+   quando plugins do Capacitor (Camera, BarcodeScanner, Health,
+   PushNotifications, Geolocation, etc.) forem adicionados.
+   ========================================================== */
+window.PlatformProvider = {
+  get current() {
+    const isNative = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+    return isNative ? (window.Capacitor.getPlatform ? window.Capacitor.getPlatform() : 'ios') : 'web';
+  },
+  isNative() {
+    return this.current !== 'web';
+  }
+};
+
+/* ===== pwa.js ===== */
+/* ==========================================================
+   PWA bootstrap: registro do Service Worker, detecção de modo
+   standalone (instalado) e banner de instrução de instalação
+   para iOS Safari (que não tem prompt de instalação nativo).
+   ========================================================== */
+
+/* ---------- 1) Registro do Service Worker ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((e) => console.error('SW falhou:', e));
+  });
+  // Quando uma nova versão assume o controle, recarrega UMA vez
+  // para garantir que os arquivos novos (já cacheados) sejam usados.
+  let refreshed = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshed) return;
+    refreshed = true;
+    location.reload();
+  });
+}
+
+/* ---------- 2) Detecção de modo standalone (instalado) ----------
+   Não depende só de User-Agent: usa a media query display-mode
+   (padrão PWA) e, como reforço específico do iOS, navigator.standalone
+   (propriedade não padronizada, mas exposta pelo próprio Safari/WebKit
+   — não é uma checagem de string de User-Agent). */
+function isStandalone() {
+  const byMediaQuery = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const byIOSFlag = window.navigator.standalone === true;
+  return !!(byMediaQuery || byIOSFlag);
+}
+window.PlatformProvider = window.PlatformProvider || {};
+window.PlatformProvider.isStandalone = isStandalone;
+
+/* ---------- 3) Banner de instalação (apenas iOS Safari, não instalado) ---------- */
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS
+}
+function isSafariBrowser() {
+  const ua = navigator.userAgent;
+  return /safari/i.test(ua) && !/crios|fxios|edgios|chrome/i.test(ua);
+}
+
+const INSTALL_DISMISS_KEY = 'fitnessos_install_banner_dismissed';
+
+function showInstallBannerIfNeeded() {
+  if (isStandalone()) return; // já instalado, nunca mostrar
+  if (!isIOS() || !isSafariBrowser()) return; // só faz sentido nesse caminho no iOS/Safari
+  if (StorageProvider.get(INSTALL_DISMISS_KEY) === '1') return; // usuário já dispensou
+
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = `
+    position:fixed; left:12px; right:12px;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    background:#15181c; border:1px solid #262b31; border-radius:14px;
+    padding:12px 14px; color:#eef1f3; font-family:-apple-system,sans-serif;
+    font-size:13.5px; line-height:1.4; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,.4);
+  `;
+  banner.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
+      <div><b>Instale o FITNESS OS</b><br>
+      Toque em <b>Compartilhar</b> (ícone de seta ⬆️ na barra do Safari) e depois em
+      <b>Adicionar à Tela de Início</b>.</div>
+      <button id="install-banner-close" style="background:none;border:none;color:#8b939c;font-size:16px;">✕</button>
+    </div>`;
+  document.body.appendChild(banner);
+  document.getElementById('install-banner-close').onclick = () => {
+    StorageProvider.set(INSTALL_DISMISS_KEY, '1');
+    banner.remove();
+  };
+}
+
+/* ---------- 4) Ajuste de interface quando já em standalone ---------- */
+function applyStandaloneClass() {
+  if (isStandalone()) document.documentElement.classList.add('is-standalone');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyStandaloneClass();
+  showInstallBannerIfNeeded();
+});
+
+/* ===== app.js ===== */
+/* ---------- STORAGE ---------- */
+const DB_KEY='fitnessos_v1';
+function arr(v){ return Array.isArray(v) ? v : []; }
+
+/* normalizeDB — garante que TODO campo usado pelo app exista, com
+   valores padrão seguros. Nunca substitui dados válidos do usuário
+   por dados demo; apenas preenche o que estiver faltando/corrompido. */
+function uid(){return Math.random().toString(36).slice(2,9);}
+function nowTime(){const d=new Date();return d.toTimeString().slice(0,5);}
+
+/* ==========================================================
+   NUTRITION DATA ENGINE
+   Arquitetura de múltiplas fontes (providers). Cada alimento
+   traz: fonte, nível de confiança e dados por 100g/100ml.
+   IMPORTANTE: esta é uma página publicada, 100% client-side,
+   sem backend. Chamadas reais a Open Food Facts / USDA exigem
+   um servidor (para não expor limites/uso e permitir cache) —
+   por isso os providers de rede ficam como adapters "stub",
+   prontos para conectar quando houver backend. O provider que
+   roda de fato aqui é o LocalFoodDatabaseProvider (curado,
+   valores por 100g de fontes nutricionais públicas de
+   referência) + UserFoodProvider (alimentos do usuário).
+   ========================================================== */
+const LOCAL_FOOD_DB = [
+  {id:'f001', name:'Arroz branco cozido', category:'Cereais', barcode:null, per100:{kcal:130,protein:2.7,carbs:28.2,fat:0.3,fiber:1.6,sodium:1,potassium:35}, source:'Base nutricional local (referência TACO/USDA)', confidence:'ALTA'},
+  {id:'f002', name:'Feijão carioca cozido', category:'Leguminosas', barcode:null, per100:{kcal:76,protein:4.8,carbs:13.6,fat:0.5,fiber:8.5,sodium:2,potassium:256}, source:'Base nutricional local (referência TACO/USDA)', confidence:'ALTA'},
+  {id:'f003', name:'Peito de frango grelhado', category:'Carnes', barcode:null, per100:{kcal:165,protein:31,carbs:0,fat:3.6,fiber:0,sodium:74,potassium:256}, source:'Base nutricional local (referência TACO/USDA)', confidence:'ALTA'},
+  {id:'f004', name:'Pão francês', category:'Padaria', barcode:'7891000100103', per100:{kcal:300,protein:8,carbs:58,fat:3.1,fiber:2.3,sodium:640,potassium:null}, source:'Base nutricional local (referência TACO)', confidence:'ALTA'},
+  {id:'f005', name:'Ovo cozido', category:'Ovos', barcode:null, per100:{kcal:146,protein:13,carbs:0.6,fat:9.5,fiber:0,sodium:140,potassium:126}, source:'Base nutricional local (referência TACO/USDA)', confidence:'ALTA'},
+  {id:'f006', name:'Banana prata', category:'Frutas', barcode:null, per100:{kcal:98,protein:1.3,carbs:26,fat:0.1,fiber:2,sodium:0,potassium:376,vitaminC:12.3}, source:'Base nutricional local (referência TACO)', confidence:'ALTA'},
+  {id:'f007', name:'Whey protein (pó)', category:'Suplementos', barcode:'7898923750019', per100:{kcal:400,protein:80,carbs:8,fat:6,fiber:0,sodium:250}, source:'Rótulo do fabricante (cadastro local)', confidence:'MÉDIA'},
+  {id:'f008', name:'Batata doce cozida', category:'Tubérculos', barcode:null, per100:{kcal:77,protein:1.6,carbs:18.4,fat:0.1,fiber:2.2,sodium:5,potassium:337}, source:'Base nutricional local (referência TACO/USDA)', confidence:'ALTA'},
+  {id:'f009', name:'Hambúrguer bovino congelado', category:'Industrializados', barcode:'7891962057904', per100:{kcal:250,protein:14,carbs:5,fat:20,fiber:0,sodium:480}, source:'Rótulo do fabricante (cadastro local)', confidence:'MÉDIA'},
+  {id:'f010', name:'Aveia em flocos', category:'Cereais', barcode:null, per100:{kcal:389,protein:16.9,carbs:66.3,fat:6.9,fiber:10.6,sodium:2,potassium:429}, source:'Base nutricional local (referência USDA)', confidence:'ALTA'},
+];
+function nutritionSearch(query){
+  const userFoods = arr(DB.userFoods).map(f=>({...f, source:f.source||'Cadastro manual do usuário', confidence:'DEPENDENTE DO USUÁRIO'}));
+  const all = [...LOCAL_FOOD_DB, ...userFoods];
+  const q = (query||'').trim().toLowerCase();
+  if(!q) return all.slice(0,8);
+  return all.filter(f=>f && f.name && f.name.toLowerCase().includes(q)).slice(0,12);
+}
+function nutritionByBarcode(code){
+  const all = [...LOCAL_FOOD_DB, ...arr(DB.userFoods)];
+  return all.find(f=>f && f.barcode && f.barcode===code) || null;
+}
+// Cálculo determinístico — nunca feito pela IA.
+function calcFromPer100(per100, qty){
+  const factor = qty/100;
+  const out={};
+  Object.keys(per100).forEach(k=>{ out[k] = (per100[k]===null||per100[k]===undefined) ? null : round1(per100[k]*factor); });
+  return out;
+}
+function round1(n){return Math.round(n*10)/10;}
+function foodUsageCounts(){
+  const counts={};
+  arr(DB.foodEntries).forEach(e=>{ if(e&&e.name) counts[e.name]=(counts[e.name]||0)+1; });
+  return counts;
+}
+function mostUsedFoods(n=5){
+  const counts=foodUsageCounts();
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([name])=>name);
+}
+function recentFoods(n=6){
+  const seen=new Set(); const out=[];
+  arr(DB.foodEntries).slice().reverse().forEach(e=>{ if(e&&e.name&&!seen.has(e.name)){seen.add(e.name); out.push(e);} });
+  return out.slice(0,n);
+}
+
+/* ==========================================================
+   SHOE ENGINE — cadastro de tênis + quilometragem automática
+   ShoeSearchProvider local (curado). Sem backend, não há busca
+   de imagens via Google/rede — foto fica opcional/ilustrativa.
+   ========================================================== */
+const SHOE_DB = [
+  {model:'Nike Pegasus 41', brand:'Nike', weightG:255, drop:10, category:'Corrida diária'},
+  {model:'Nike Pegasus 40', brand:'Nike', weightG:257, drop:10, category:'Corrida diária'},
+  {model:'Nike Vaporfly 3', brand:'Nike', weightG:184, drop:8, category:'Competição'},
+  {model:'Nike Invincible 3', brand:'Nike', weightG:290, drop:9, category:'Amortecimento máximo'},
+  {model:'Adidas Adizero Boston 12', brand:'Adidas', weightG:230, drop:8, category:'Tempo run'},
+  {model:'Adidas Ultraboost Light', brand:'Adidas', weightG:310, drop:10, category:'Corrida diária'},
+  {model:'Asics Novablast 4', brand:'Asics', weightG:255, drop:8, category:'Corrida diária'},
+  {model:'Asics Gel Kayano 30', brand:'Asics', weightG:310, drop:10, category:'Estabilidade'},
+  {model:'Hoka Clifton 9', brand:'Hoka', weightG:252, drop:5, category:'Amortecimento máximo'},
+  {model:'Hoka Mach 6', brand:'Hoka', weightG:235, drop:5, category:'Corrida diária'},
+  {model:'Saucony Endorphin Speed 4', brand:'Saucony', weightG:230, drop:8, category:'Tempo run'},
+];
+function shoeSearch(query){
+  const q=query.trim().toLowerCase();
+  if(!q) return SHOE_DB.slice(0,6);
+  return SHOE_DB.filter(s=>s.model.toLowerCase().includes(q)).slice(0,8);
+}
+function shoeStats(shoeId){
+  const runs = arr(DB.runningEntries).filter(r=>r && r.shoeId===shoeId);
+  const km = runs.reduce((s,r)=>s+(typeof r.distance==='number'?r.distance:0),0);
+  const paceAvg = runs.length ? avg(runs.map(r=>r.distance>0?r.duration/r.distance:0)) : 0;
+  return {runs:runs.length, km:round1(km), paceAvg};
+}
+
+
+
+function seedDemo(){
+  const days=[]; for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(getLocalDateString(d));}
+  const weight=[95,94.6,94.3,94.1,93.8,93.5,93.2,92.9,92.7,92.5,92.2,92.0,91.9,91.8];
+  const weightEntries=days.map((d,i)=>({id:uid(),date:d,weight:weight[i]}));
+  const foodEntries=[
+    {id:uid(),date:days[13],time:'07:30',meal:'Café da manhã',name:'Pão francês',qty:200,unit:'g',kcal:520,protein:16,carbs:100,fat:4},
+    {id:uid(),date:days[13],time:'07:30',meal:'Café da manhã',name:'Manteiga',qty:25,unit:'g',kcal:180,protein:0,carbs:0,fat:20},
+    {id:uid(),date:days[13],time:'16:30',meal:'Almoço',name:'Feijão',qty:250,unit:'g',kcal:230,protein:15,carbs:40,fat:1},
+    {id:uid(),date:days[13],time:'16:30',meal:'Almoço',name:'Frango',qty:100,unit:'g',kcal:165,protein:31,carbs:0,fat:4},
+    {id:uid(),date:days[13],time:'21:00',meal:'Jantar',name:'Arroz',qty:120,unit:'g',kcal:156,protein:3,carbs:34,fat:0},
+    {id:uid(),date:days[13],time:'21:00',meal:'Jantar',name:'Hambúrguer congelado',qty:100,unit:'g',kcal:250,protein:14,carbs:5,fat:20},
+  ];
+  const workoutSets=[
+    {id:uid(),date:days[13],exercise:'Smith Squat',weight:105,reps:8,type:'Cluster'},
+    {id:uid(),date:days[13],exercise:'Machine Bench',weight:70,reps:10,type:'Válida'},
+  ];
+  const sleepEntries = days.map((d,i)=>({id:uid(),date:d,hours: i%3===0?5.2:5.9, quality: i%3===0?'baixa':'média'}));
+  const hydrationEntries = days.map(d=>({id:uid(),date:d,liters:2.8}));
+  const stepsEntries = days.map((d,i)=>({id:uid(),date:d,steps: 7000+ (i*120)}));
+  const runningEntries = [
+    {id:uid(),date:days[12],type:'Fácil',distance:6,duration:32,notes:'6 km fácil',shoeId:'shoe1'},
+    {id:uid(),date:days[9],type:'Intervalado',distance:2.5,duration:14,notes:'500m repeats',shoeId:'shoe1'},
+    {id:uid(),date:days[5],type:'Tiros',distance:1.6,duration:9,notes:'200m intervals',shoeId:'shoe1'},
+  ];
+  const shoes = [
+    {id:'shoe1', brand:'Nike', model:'Pegasus 41', weightG:255, drop:10, category:'Corrida diária',
+     purchaseDate:days[0], initialKm:0, alertKm:600, status:'ATIVO'}
+  ];
+  const measurements = [
+    {id:uid(), date:days[13], waist:88, arm:36, chest:102, hip:98, thigh:60, calf:38},
+    {id:uid(), date:days[0], waist:85, arm:36.5, chest:103, hip:97, thigh:60.5, calf:38},
+  ];
+  return {
+    profile:{name:'André',age:21,sex:'masculino',height:181,goal:'Recomposição corporal',experience:'intermediário',activity:'moderada'},
+    targets:{kcal:2600,protein:180,carbs:280,fat:80,water:3.5,sleep:7,steps:8000},
+    weightEntries, foodEntries, workoutSets, sleepEntries, hydrationEntries, stepsEntries, runningEntries,
+    userFoods:[], shoes, measurements,
+    isDemo:true
+  };
+}
+
+function normalizeDB(d){
+  d = (d && typeof d === 'object') ? d : {};
+
+  d.profile = (d.profile && typeof d.profile === 'object') ? d.profile : {};
+  d.profile.name = d.profile.name || 'Usuário';
+  d.profile.age = d.profile.age || 30;
+  d.profile.sex = d.profile.sex || 'masculino';
+  d.profile.height = d.profile.height || 170;
+  d.profile.goal = d.profile.goal || 'Saúde geral';
+  d.profile.experience = d.profile.experience || 'iniciante';
+  d.profile.activity = d.profile.activity || 'moderada';
+
+  d.targets = (d.targets && typeof d.targets === 'object') ? d.targets : {};
+  d.targets.kcal = d.targets.kcal || 2200;
+  d.targets.protein = d.targets.protein || 150;
+  d.targets.carbs = d.targets.carbs || 250;
+  d.targets.fat = d.targets.fat || 70;
+  d.targets.water = d.targets.water || 2.5;
+  d.targets.sleep = d.targets.sleep || 7;
+  d.targets.steps = d.targets.steps || 8000;
+
+  d.weightEntries = arr(d.weightEntries).filter(e=>e && e.date && typeof e.weight==='number' && !isNaN(e.weight));
+  d.foodEntries = arr(d.foodEntries).filter(e=>e && e.date);
+  d.workoutSets = arr(d.workoutSets).filter(e=>e && e.date);
+  d.sleepEntries = arr(d.sleepEntries).filter(e=>e && e.date);
+  d.hydrationEntries = arr(d.hydrationEntries).filter(e=>e && e.date);
+  d.stepsEntries = arr(d.stepsEntries).filter(e=>e && e.date);
+  d.runningEntries = arr(d.runningEntries).filter(e=>e && e.date).map(r=>({shoeId:null, ...r}));
+  d.userFoods = arr(d.userFoods);
+  d.shoes = arr(d.shoes);
+  d.measurements = arr(d.measurements);
+
+  return d;
+}
+
+function loadDB(){
+  let raw = null;
+  try { raw = StorageProvider.get(DB_KEY); }
+  catch(e){ console.error('Falha ao acessar o armazenamento:', e); }
+
+  if (raw){
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object'){
+        return normalizeDB(parsed); // dados existentes: NUNCA trocados por demo
+      }
+    } catch(e){
+      console.error('DB corrompido (JSON inválido). Recriando com dados de demonstração.', e);
+    }
+  }
+  // só chega aqui se não havia nada salvo ainda, ou o conteúdo era ilegível
+  return normalizeDB(seedDemo());
+}
+function saveDB(){ try{ StorageProvider.set(DB_KEY, JSON.stringify(DB)); }catch(e){console.error('Falha ao salvar dados:',e);} }
+function todayStr(){return localDateString();}
+let DB = loadDB();
+saveDB();
+
+/* ---------- HELPERS ---------- */
+function entriesFor(arr,date){ if(!Array.isArray(arr)) return []; return arr.filter(e=>e && e.date===date); }
+function last(arr,n){return arr.slice(-n);}
+function avg(nums){return nums.length? nums.reduce((a,b)=>a+b,0)/nums.length : 0;}
+function fmt1(n){return (Math.round(n*10)/10).toFixed(1);}
+function fmt0(n){return Math.round(n);}
+
+function weightTrend(){
+  const w = arr(DB.weightEntries).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  if(w.length<2) return {current:w[0]?.weight||0, avg7:w[0]?.weight||0, changeWeek:0, series:w};
+  const current = w[w.length-1].weight;
+  const last7 = last(w,7).map(e=>e.weight);
+  const avg7 = avg(last7);
+  const prev7 = w.slice(Math.max(0,w.length-14), Math.max(0,w.length-7)).map(e=>e.weight);
+  const avgPrev7 = prev7.length? avg(prev7): avg7;
+  const changeWeek = avg7-avgPrev7;
+  return {current, avg7, changeWeek, series:w};
+}
+function todayTotals(){
+  const f = entriesFor(DB.foodEntries, todayStr());
+  const num = (v)=> (typeof v==='number' && !isNaN(v)) ? v : 0;
+  return {
+    kcal: f.reduce((s,e)=>s+num(e.kcal),0),
+    protein: f.reduce((s,e)=>s+num(e.protein),0),
+    carbs: f.reduce((s,e)=>s+num(e.carbs),0),
+    fat: f.reduce((s,e)=>s+num(e.fat),0),
+    entries:f
+  };
+}
+function todaySleep(){ const list=arr(DB.sleepEntries); const e=list.find(s=>s&&s.date===todayStr()); return e?e.hours:null; }
+function todayWater(){ const list=arr(DB.hydrationEntries); const e=list.find(s=>s&&s.date===todayStr()); return e?e.liters:0; }
+function todaySteps(){ const list=arr(DB.stepsEntries); const e=list.find(s=>s&&s.date===todayStr()); return e?e.steps:0; }
+function avgSleep(n=7){ const list=arr(DB.sleepEntries).slice().sort((a,b)=>a.date.localeCompare(b.date)); return avg(last(list,n).map(e=>e.hours)); }
+function avgSteps(n=7){ const list=arr(DB.stepsEntries).slice().sort((a,b)=>a.date.localeCompare(b.date)); return avg(last(list,n).map(e=>e.steps)); }
+function sleepPerformancePattern(){
+  const low = arr(DB.sleepEntries).filter(s=>s && typeof s.hours==='number' && s.hours<6).map(s=>s.date);
+  if(low.length<2) return null;
+  const legDays = arr(DB.workoutSets).filter(w=>w && w.exercise && /squat|leg|perna/i.test(w.exercise)).map(w=>w.date);
+  const overlap = low.filter(d=>legDays.includes(d));
+  if(overlap.length>=2) return `Foi identificado um possível padrão entre noites de sono reduzido (<6h) e dias de treino de pernas (${overlap.length} ocorrências). Isso é uma correlação observada, não uma causalidade confirmada.`;
+  return null;
+}
+/* ==========================================================
+   ENERGY EXPENDITURE ENGINE
+   Nível 1: estimativa inicial (BMR + atividade)
+   Nível 2/3: ajuste adaptativo usando ingestão média + tendência
+   de peso real do usuário (mais dados = mais confiança).
+   ========================================================== */
+function estimateBMR(){
+  const p = DB.profile; const w = weightTrend().current || p.weight || 80;
+  const h = p.height||175, age=p.age||30;
+  // Mifflin-St Jeor
+  const base = p.sex==='feminino' ? (10*w + 6.25*h - 5*age - 161) : (10*w + 6.25*h - 5*age + 5);
+  return base;
+}
+function activityFactor(){
+  const runs7 = DB.runningEntries.filter(r=>r.date>=daysAgo(7)).length;
+  const sets7 = DB.workoutSets.filter(s=>s.date>=daysAgo(7)).length;
+  const steps7 = avgSteps(7);
+  let factor = 1.3;
+  if(sets7>=8) factor += 0.15;
+  if(runs7>=2) factor += 0.1;
+  if(steps7>9000) factor += 0.1; else if(steps7<5000) factor -= 0.05;
+  return Math.min(1.75, Math.max(1.2, factor));
+}
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return getLocalDateString(d); }
+function energyExpenditure(){
+  const bmr = estimateBMR();
+  const initial = Math.round(bmr*activityFactor());
+  const uniqDays = [...new Set(DB.foodEntries.map(e=>e.date))];
+  const uniqWeightDays = DB.weightEntries.length;
+  let estimate = initial, confidence='BAIXA', basis='Estimativa inicial (BMR + nível de atividade).';
+  if(uniqDays.length>=14 && uniqWeightDays>=14){
+    // adaptativo: ingestão média - (variação de peso × 7700 kcal/kg) / dias
+    const trend = weightTrend();
+    const intake14 = last(uniqDays.slice().sort(),14).map(d=>entriesFor(DB.foodEntries,d).reduce((s,e)=>s+e.kcal,0));
+    const avgIntake = avg(intake14.filter(v=>v>0));
+    const kcalPerKg = 7700;
+    const dailyChangeKcal = (trend.changeWeek/7)*kcalPerKg;
+    estimate = Math.round(avgIntake - dailyChangeKcal);
+    confidence = uniqDays.length>=28 ? 'MÉDIA/ALTA' : 'MÉDIA';
+    basis = 'Calculado a partir da ingestão média registrada e da tendência real de peso nos últimos dias.';
+  }
+  return {estimate, confidence, basis, bmr:Math.round(bmr)};
+}
+
+/* ---------- MEASUREMENTS ---------- */
+function latestMeasurement(){ const m=arr(DB.measurements).slice().sort((a,b)=>a.date.localeCompare(b.date)); return m[m.length-1]||null; }
+function firstMeasurement(){ const m=arr(DB.measurements).slice().sort((a,b)=>a.date.localeCompare(b.date)); return m[0]||null; }
+function measurementDelta(field){
+  const a=firstMeasurement(), b=latestMeasurement();
+  if(!a||!b||a===b) return null;
+  return round1(b[field]-a[field]);
+}
+
+function proteinStreakLow(days=3){
+  const t=(DB.targets && DB.targets.protein) || 150;
+  let count=0;
+  const uniq = [...new Set(arr(DB.foodEntries).map(e=>e && e.date).filter(Boolean))].sort().reverse();
+  for(const d of uniq.slice(0,days)){
+    const p = entriesFor(DB.foodEntries,d).reduce((s,e)=>s+(typeof e.protein==='number'?e.protein:0),0);
+    if(p < t*0.8) count++; else break;
+  }
+  return count>=days;
+}
+
+/* ---------- INSIGHTS ENGINE (simplificado) ---------- */
+function buildInsights(){
+  const insights=[];
+  const trend = weightTrend();
+  const tt = todayTotals();
+
+  if(proteinStreakLow(3)){
+    insights.push({level:'high', title:'Prioridade alta — proteína abaixo do alvo',
+      text:`Sua ingestão de proteína ficou abaixo de 80% da meta (${DB.targets.protein}g) nos últimos 3 dias. Com treino de força em andamento, isso é um fator de risco para preservação de massa magra. Ação: acrescente 30–40g de proteína em 1–2 refeições.`});
+  }
+  if(trend.changeWeek <= -0.7){
+    insights.push({level:'med', title:'Atenção — velocidade de perda de peso',
+      text:`A média móvel de 7 dias caiu ${fmt1(Math.abs(trend.changeWeek))}kg em relação à semana anterior. Isso é mais rápido que o ritmo geralmente recomendado para preservar massa muscular. Vale observar antes de reduzir mais calorias.`});
+  } else if(trend.changeWeek < -0.05){
+    insights.push({level:'pos', title:'Tendência de peso',
+      text:`Sua média de 7 dias está caindo de forma gradual (${fmt1(trend.changeWeek)}kg/semana), compatível com perda de gordura controlada.`});
+  } else if(Math.abs(trend.changeWeek) < 0.05){
+    insights.push({level:'med', title:'Peso estável',
+      text:`Sua tendência de peso está praticamente estável na última semana. Isso pode indicar manutenção, ou ainda dados insuficientes — observe mais alguns dias antes de tirar conclusões.`});
+  }
+  if(tt.kcal>0 && tt.kcal < DB.targets.kcal*0.6){
+    insights.push({level:'med', title:'Ingestão calórica baixa hoje',
+      text:`Você registrou ${fmt0(tt.kcal)} kcal até agora, bem abaixo da meta diária de ${DB.targets.kcal} kcal. Pode ser apenas o dia ainda não ter terminado — dado de baixa confiança até o fim do dia.`});
+  }
+  const sleepAvg = avgSleep(7);
+  if(sleepAvg && sleepAvg < 6){
+    insights.push({level:'med', title:'Sono abaixo do habitual',
+      text:`Sua média de sono nos últimos 7 dias é de ${fmt1(sleepAvg)}h, abaixo do alvo de ${DB.targets.sleep}h. Sono insuficiente pode afetar recuperação, performance e regulação de apetite.`});
+  }
+  const pattern = sleepPerformancePattern();
+  if(pattern){ insights.push({level:'med', title:'Padrão identificado: sono e treino de pernas', text: pattern}); }
+  if(insights.length===0){
+    insights.push({level:'pos', title:'Sem alertas relevantes',
+      text:'Com os dados disponíveis no momento, não há padrões de atenção prioritária. Continue registrando para aumentar a confiança da análise.'});
+  }
+  return insights;
+}
+
+/* ---------- SPARKLINE SVG ---------- */
+function sparkline(points, color){
+  if(points.length<2) return '<div class="empty">Dados insuficientes</div>';
+  const w=300,h=100,pad=8;
+  const min=Math.min(...points), max=Math.max(...points);
+  const range = (max-min)||1;
+  const step = (w-pad*2)/(points.length-1);
+  const pts = points.map((p,i)=>{
+    const x = pad + i*step;
+    const y = pad + (1-((p-min)/range))*(h-pad*2);
+    return `${x},${y}`;
+  }).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polyline fill="none" stroke="${color}" stroke-width="2.5" points="${pts}" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ---------- RENDER: HOME ---------- */
+function renderHome(){
+  const name = (DB.profile && DB.profile.name) || 'Usuário';
+  document.getElementById('greetText').textContent = 'Olá, '+name+' 👋';
+  const trend = weightTrend();
+  const tt = todayTotals();
+  const insights = buildInsights().slice(0,3);
+  const arrow = trend.changeWeek < -0.03 ? '↓' : trend.changeWeek > 0.03 ? '↑' : '→';
+
+  document.getElementById('tab-home').innerHTML = `
+    <div class="card">
+      <h3>Como estou hoje</h3>
+      <div class="grid2">
+        <div class="metric"><div class="v">${fmt1(trend.current)} kg</div><div class="l">Peso atual</div></div>
+        <div class="metric"><div class="v">${arrow} ${fmt1(Math.abs(trend.changeWeek))} kg/sem</div><div class="l">Tendência (méd. 7d)</div></div>
+        <div class="metric"><div class="v">${fmt0(tt.kcal)} / ${DB.targets.kcal}</div><div class="l">Calorias</div>
+          <div class="bar ${tt.kcal>DB.targets.kcal?'over':''}"><div style="width:${Math.min(100,tt.kcal/DB.targets.kcal*100)}%"></div></div></div>
+        <div class="metric"><div class="v">${fmt0(tt.protein)} / ${DB.targets.protein}g</div><div class="l">Proteína</div>
+          <div class="bar"><div style="width:${Math.min(100,tt.protein/DB.targets.protein*100)}%"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Análise de hoje</h3>
+      ${insights.map(i=>`<div class="insight ${i.level}"><b>${i.level==='high'?'🔴 Alta prioridade':i.level==='med'?'🟡 Atenção':'🟢 Positivo'}</b>${i.title}<br><span style="color:var(--sub)">${i.text}</span></div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Rotina de hoje</h3>
+      <div class="grid3">
+        <div class="metric"><div class="v">${todaySleep()!==null?fmt1(todaySleep())+'h':'—'}</div><div class="l">Sono</div></div>
+        <div class="metric"><div class="v">${fmt1(todayWater())} / ${DB.targets.water}L</div><div class="l">Água</div></div>
+        <div class="metric"><div class="v">${fmt0(todaySteps())}</div><div class="l">Passos</div></div>
+      </div>
+      <div class="smallbtnrow" style="margin-top:10px;">
+        <button class="btn secondary" onclick="openSleepModal()">+ Sono</button>
+        <button class="btn secondary" onclick="openWaterModal()">+ Água</button>
+        <button class="btn secondary" onclick="openStepsModal()">+ Passos</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Ações rápidas</h3>
+      <div class="smallbtnrow" style="margin-bottom:8px;">
+        <button class="btn" onclick="openFoodModal()">+ Alimento</button>
+        <button class="btn secondary" onclick="openWeightModal()">+ Peso</button>
+      </div>
+      <div class="smallbtnrow">
+        <button class="btn ghost" onclick="openSetModal()">+ Série de treino</button>
+        <button class="btn ghost" onclick="openRunModal()">+ Corrida</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- RENDER: DIÁRIO ---------- */
+function renderDiario(){
+  const t = todayStr();
+  const entries = entriesFor(DB.foodEntries,t).sort((a,b)=>a.time.localeCompare(b.time));
+  const totals = todayTotals();
+  const meals = {};
+  entries.forEach(e=>{ meals[e.meal]=meals[e.meal]||[]; meals[e.meal].push(e); });
+
+  document.getElementById('tab-diario').innerHTML = `
+    <div class="card">
+      <h3>Totais de hoje</h3>
+      <div class="grid3">
+        <div class="metric"><div class="v">${fmt0(totals.kcal)}</div><div class="l">kcal / ${DB.targets.kcal}</div></div>
+        <div class="metric"><div class="v">${fmt0(totals.protein)}g</div><div class="l">Proteína / ${DB.targets.protein}g</div></div>
+        <div class="metric"><div class="v">${fmt0(totals.carbs)}g</div><div class="l">Carbo / ${DB.targets.carbs}g</div></div>
+      </div>
+    </div>
+    <button class="btn" style="margin-bottom:12px;" onclick="openFoodModal()">+ Adicionar alimento</button>
+    <div class="card">
+      <h3>Registros por horário</h3>
+      ${entries.length===0?'<div class="empty">Nenhum alimento registrado hoje</div>':
+        entries.map(e=>`<div class="row">
+          <div><b>${e.name}</b><div class="sub">${e.time} · ${e.meal} · ${e.qty}${e.unit}${e.source?` · <span title="${e.source}">${e.confidence||''}</span>`:''}</div></div>
+          <div style="text-align:right"><div>${fmt0(e.kcal)} kcal</div>
+          <button class="btn ghost" style="width:auto;padding:2px 8px;font-size:11px;margin-top:4px;" onclick="deleteFood('${e.id}')">excluir</button></div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+/* ---------- RENDER: PESO ---------- */
+function renderPeso(){
+  const trend = weightTrend();
+  const series = trend.series.slice(-30);
+  document.getElementById('tab-peso').innerHTML = `
+    <div class="card">
+      <h3>Peso real (últimos ${series.length} registros)</h3>
+      ${sparkline(series.map(s=>s.weight),'#5b8cff')}
+    </div>
+    <div class="card">
+      <h3>Resumo de tendência</h3>
+      <div class="grid2">
+        <div class="metric"><div class="v">${fmt1(trend.current)} kg</div><div class="l">Último registro</div></div>
+        <div class="metric"><div class="v">${fmt1(trend.avg7)} kg</div><div class="l">Média 7 dias</div></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--sub);margin-top:10px;">A variação diária de peso pode conter água, glicogênio, sódio e conteúdo intestinal. Avalie a tendência de 7+ dias, não o valor isolado de hoje.</p>
+    </div>
+    <button class="btn" onclick="openWeightModal()">+ Registrar peso</button>
+    <div class="card" style="margin-top:12px;">
+      <h3>Medidas corporais</h3>
+      ${(()=>{const f=firstMeasurement(),l=latestMeasurement(); if(!l) return '<div class="empty">Nenhuma medida registrada</div>';
+        const fields=[['waist','Cintura'],['arm','Braço'],['chest','Peito'],['hip','Quadril'],['thigh','Coxa'],['calf','Panturrilha']];
+        return fields.map(([k,label])=>{const d=measurementDelta(k); const arrow=d===null?'':(d<0?`↓ ${Math.abs(d)}cm`:d>0?`↑ ${d}cm`:'estável');
+          return `<div class="row"><span>${label}</span><span>${l[k]??'—'}cm <span class="sub">${arrow}</span></span></div>`;}).join('');
+      })()}
+      <button class="btn secondary" style="margin-top:10px;" onclick="openMeasureModal()">+ Registrar medidas</button>
+    </div>
+  `;
+}
+
+/* ---------- RENDER: TREINO ---------- */
+function renderTreino(){
+  const sets = DB.workoutSets.slice().sort((a,b)=> (b.date+b.id).localeCompare(a.date+a.id));
+  const runs = (DB.runningEntries||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('tab-treino').innerHTML = `
+    <div class="smallbtnrow" style="margin-bottom:12px;">
+      <button class="btn" onclick="openSetModal()">+ Série</button>
+      <button class="btn secondary" onclick="openRunModal()">+ Corrida</button>
+    </div>
+    <div class="card">
+      <h3>Histórico de séries (musculação)</h3>
+      ${sets.length===0?'<div class="empty">Nenhuma série registrada</div>':
+        sets.map(s=>`<div class="row">
+          <div><b>${s.exercise}</b><div class="sub">${s.date} · ${s.type}</div></div>
+          <div style="text-align:right">${s.weight}kg × ${s.reps}
+          <br><button class="btn ghost" style="width:auto;padding:2px 8px;font-size:11px;margin-top:4px;" onclick="deleteSet('${s.id}')">excluir</button></div>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Corrida</h3>
+      ${runs.length===0?'<div class="empty">Nenhuma corrida registrada</div>':
+        runs.map(r=>{const pace=r.distance>0?(r.duration/r.distance):0; const paceMin=Math.floor(pace),paceSec=Math.round((pace-paceMin)*60);
+        return `<div class="row">
+          <div><b>${r.type}</b><div class="sub">${r.date} · ${r.notes||''}</div></div>
+          <div style="text-align:right">${r.distance}km em ${r.duration}min<br><span class="sub">${paceMin}:${String(paceSec).padStart(2,'0')}/km</span>
+          <br><button class="btn ghost" style="width:auto;padding:2px 8px;font-size:11px;margin-top:4px;" onclick="deleteRun('${r.id}')">excluir</button></div>
+        </div>`;}).join('')}
+    </div>
+    <div class="card">
+      <h3>Tênis de corrida</h3>
+      ${(DB.shoes||[]).length===0?'<div class="empty">Nenhum tênis cadastrado</div>':
+        DB.shoes.map(s=>{const st=shoeStats(s.id); const total=round1((s.initialKm||0)+st.km);
+        const alertBox = s.alertKm && total>=s.alertKm ? `<div class="chip med" style="margin-top:6px;">Atingiu ${s.alertKm}km — considere inspecionar o tênis</div>` : '';
+        return `<div class="row"><div><b>${s.brand} ${s.model}</b><div class="sub">${st.runs} corridas · ${total}km acumulados · status ${s.status}</div>${alertBox}</div>
+        <button class="btn ghost" style="width:auto" onclick="deleteShoe('${s.id}')">excluir</button></div>`;}).join('')}
+      <button class="btn secondary" style="margin-top:10px;" onclick="openShoeModal()">+ Cadastrar tênis</button>
+    </div>
+  `;
+}
+
+/* ---------- RENDER: ANÁLISE ---------- */
+function renderAnalise(){
+  const insights = buildInsights();
+  const trend = weightTrend();
+  document.getElementById('tab-analise').innerHTML = `
+    <div class="card">
+      <h3>Análise do sistema</h3>
+      ${insights.map(i=>`<div class="insight ${i.level}"><b>${i.level==='high'?'🔴 Prioridade alta':i.level==='med'?'🟡 Atenção':'🟢 Positivo'}</b>${i.title}<br><span style="color:var(--sub)">${i.text}</span></div>`).join('')}
+    </div>
+    <div class="card">
+      <h3>Confiança dos dados</h3>
+      <div class="row"><span>Peso diário</span><span class="chip ${DB.weightEntries.length>=7?'low':'med'}">${DB.weightEntries.length>=7?'ALTA':'MÉDIA'}</span></div>
+      <div class="row"><span>Gasto energético estimado</span><span class="chip ${DB.weightEntries.length>=28?'low':'med'}">${DB.weightEntries.length>=28?'MÉDIA/ALTA':'BAIXA/MÉDIA'}</span></div>
+      <div class="row"><span>Registro alimentar</span><span class="chip low">ALTA (manual)</span></div>
+    </div>
+    <div class="card">
+      <h3>Nota importante</h3>
+      <p style="font-size:12.5px;color:var(--sub);">Este painel apresenta estimativas e hipóteses com base nos dados registrados, não diagnósticos clínicos. Padrões que sugiram algo fora do comum merecem avaliação com um profissional de saúde.</p>
+    </div>
+  `;
+}
+
+function safeRender(fn, label, tabId){
+  try { fn(); }
+  catch(e){
+    console.error('[FITNESS OS] Erro ao renderizar "'+label+'":', e);
+    const el = document.getElementById(tabId);
+    if(el) el.innerHTML = '<div class="card"><h3>Não foi possível carregar esta seção</h3>'
+      + '<p style="color:var(--sub);font-size:13px;">Seus dados continuam salvos. Tente trocar de aba e voltar, ou recarregar o app.</p></div>';
+  }
+}
+function renderAll(){
+  safeRender(renderHome, 'Home', 'tab-home');
+  safeRender(renderDiario, 'Diário', 'tab-diario');
+  safeRender(renderPeso, 'Peso', 'tab-peso');
+  safeRender(renderTreino, 'Treino', 'tab-treino');
+  safeRender(renderAnalise, 'Análise', 'tab-analise');
+}
+
+/* ---------- NAV ---------- */
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- MODALS ---------- */
+function closeModal(){ document.getElementById('modalBg').classList.remove('show'); document.getElementById('modalBody').innerHTML=''; }
+function openModal(html){ document.getElementById('modalBody').innerHTML = `<button class="close" onclick="closeModal()">✕</button>`+html; document.getElementById('modalBg').classList.add('show'); }
+document.getElementById('modalBg').addEventListener('click',e=>{ if(e.target.id==='modalBg') closeModal(); });
+
+function openFoodModal(){
+  const recent = recentFoods(6);
+  openModal(`
+    <h2>Adicionar alimento</h2>
+    <div class="smallbtnrow" style="margin-bottom:10px;">
+      <button class="btn secondary" onclick="foodTab('search')">Buscar</button>
+      <button class="btn secondary" onclick="foodTab('barcode')">Cód. de barras</button>
+      <button class="btn secondary" onclick="foodTab('manual')">Manual</button>
+    </div>
+    <div id="food-tab-search">
+      <label>Nome do alimento</label>
+      <input id="f-search" placeholder="Ex: arroz, frango, aveia..." oninput="renderFoodResults()">
+      ${recent.length?`<div style="margin:6px 0 10px;">${recent.map(r=>`<span class="tag" style="margin-right:6px;cursor:pointer" onclick="document.getElementById('f-search').value='${r.name.replace(/'/g,"")}';renderFoodResults();">${r.name}</span>`).join('')}</div>`:''}
+      <div id="food-results"></div>
+    </div>
+    <div id="food-tab-barcode" style="display:none;">
+      <label>Código de barras (EAN/UPC/GTIN)</label>
+      <input id="f-barcode" placeholder="Ex: 7891962057904">
+      <button class="btn secondary" onclick="lookupBarcode()">Buscar produto</button>
+      <div id="barcode-result" style="margin-top:10px;"></div>
+      <p style="font-size:11.5px;color:var(--sub);margin-top:8px;">Nesta versão (sem backend), a busca consulta a base local cadastrada — não há conexão em tempo real com Open Food Facts/USDA. A arquitetura de providers já está pronta para isso quando houver servidor.</p>
+    </div>
+    <div id="food-tab-manual" style="display:none;">
+      <label>Nome</label><input id="f-name" placeholder="Ex: Prato caseiro">
+      <div class="grid2">
+        <div><label>Quantidade</label><input id="f-qty" type="number" placeholder="120"></div>
+        <div><label>Unidade</label><select id="f-unit"><option>g</option><option>ml</option><option>unidade</option><option>colher</option><option>porção</option></select></div>
+      </div>
+      <label>Refeição</label>
+      <select id="f-meal"><option>Café da manhã</option><option>Almoço</option><option>Jantar</option><option>Pré-treino</option><option>Pós-treino</option><option>Lanche</option><option>Personalizada</option></select>
+      <label>Horário</label><input id="f-time" type="time" value="${nowTime()}">
+      <div class="grid3">
+        <div><label>Kcal</label><input id="f-kcal" type="number" placeholder="0"></div>
+        <div><label>Proteína g</label><input id="f-p" type="number" placeholder="0"></div>
+        <div><label>Carbo g</label><input id="f-c" type="number" placeholder="0"></div>
+      </div>
+      <label>Gordura g</label><input id="f-fat" type="number" placeholder="0">
+      <button class="btn" onclick="saveFood()">Salvar</button>
+    </div>
+  `);
+  foodTab('search'); renderFoodResults();
+}
+function foodTab(t){
+  ['search','barcode','manual'].forEach(x=>{ const el=document.getElementById('food-tab-'+x); if(el) el.style.display = x===t?'block':'none'; });
+}
+function renderFoodResults(){
+  const q=(document.getElementById('f-search')?.value)||'';
+  const results = nutritionSearch(q);
+  const box=document.getElementById('food-results'); if(!box) return;
+  box.innerHTML = results.length===0 ? '<div class="empty">Nada encontrado. Tente "Manual" para cadastrar.</div>' :
+    results.map(f=>`<div class="row" style="cursor:pointer" onclick="selectFood('${f.id}')">
+      <div><b>${f.name}</b><div class="sub">${f.category||''} · fonte: ${f.source} · confiança ${f.confidence}</div></div>
+      <div class="sub">${f.per100.kcal} kcal/100g</div>
+    </div>`).join('');
+}
+function findFoodById(id){ return [...LOCAL_FOOD_DB, ...(DB.userFoods||[])].find(f=>f.id===id); }
+function selectFood(id){
+  const f = findFoodById(id); if(!f) return;
+  openModal(`
+    <h2>${f.name}</h2>
+    <p class="tag">Fonte: ${f.source} · Confiança: ${f.confidence}</p>
+    <label>Quantidade</label>
+    <div class="grid2">
+      <input id="q-qty" type="number" value="100" oninput="updateFoodPreview('${f.id}')">
+      <select id="q-unit"><option>g</option><option>ml</option><option>porção</option></select>
+    </div>
+    <label>Refeição</label>
+    <select id="q-meal"><option>Café da manhã</option><option>Almoço</option><option>Jantar</option><option>Pré-treino</option><option>Pós-treino</option><option>Lanche</option></select>
+    <label>Horário</label><input id="q-time" type="time" value="${nowTime()}">
+    <div class="card" id="food-preview" style="margin-top:10px;"></div>
+    <button class="btn" style="margin-top:10px;" onclick="confirmAddFood('${f.id}')">Adicionar ao diário</button>
+  `);
+  updateFoodPreview(f.id);
+}
+function updateFoodPreview(id){
+  const f=findFoodById(id); const qty=parseFloat(document.getElementById('q-qty')?.value)||0;
+  const calc = calcFromPer100(f.per100, qty);
+  const line=(k,label)=> calc[k]===null||calc[k]===undefined ? `<div class="row"><span>${label}</span><span class="sub">não informado pela fonte</span></div>` : `<div class="row"><span>${label}</span><span>${calc[k]}${k==='kcal'?'':'g'}</span></div>`;
+  document.getElementById('food-preview').innerHTML = `
+    <h3>Cálculo (${qty}g)</h3>
+    ${line('kcal','Calorias')}${line('protein','Proteína')}${line('carbs','Carboidratos')}${line('fat','Gordura')}${line('fiber','Fibra')}
+    <p style="font-size:11.5px;color:var(--sub);margin-top:8px;">Fórmula: valor por 100g × ${qty} ÷ 100. Ex: ${f.per100.kcal} × ${qty} ÷ 100 = ${calc.kcal} kcal.</p>
+  `;
+}
+function confirmAddFood(id){
+  const f=findFoodById(id); const qty=parseFloat(document.getElementById('q-qty').value)||0;
+  if(!qty){alert('Informe a quantidade');return;}
+  const calc = calcFromPer100(f.per100, qty);
+  DB.foodEntries.push({id:uid(), date:todayStr(), time:document.getElementById('q-time').value||nowTime(),
+    meal:document.getElementById('q-meal').value, name:f.name, qty, unit:document.getElementById('q-unit').value,
+    kcal:calc.kcal||0, protein:calc.protein||0, carbs:calc.carbs||0, fat:calc.fat||0,
+    source:f.source, confidence:f.confidence});
+  saveDB(); closeModal(); renderAll();
+}
+function lookupBarcode(){
+  const code=document.getElementById('f-barcode').value.trim();
+  const box=document.getElementById('barcode-result');
+  if(!code){ box.innerHTML='<div class="empty">Informe um código</div>'; return; }
+  const f = nutritionByBarcode(code);
+  if(f){
+    box.innerHTML = `<div class="row"><div><b>${f.name}</b><div class="sub">Fonte: ${f.source} · ${f.per100.kcal} kcal/100g</div></div>
+      <button class="btn secondary" style="width:auto" onclick="closeModal();selectFood('${f.id}')">Usar</button></div>`;
+  } else {
+    box.innerHTML = `<div class="empty">Produto não encontrado na base local.</div>
+      <div class="smallbtnrow" style="margin-top:8px;">
+        <button class="btn secondary" onclick="foodTab('search')">Buscar por nome</button>
+        <button class="btn secondary" onclick="foodTab('manual')">Cadastrar manualmente</button>
+      </div>`;
+  }
+}
+function saveFood(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){ alert('Informe o nome do alimento'); return; }
+  const qty=parseFloat(document.getElementById('f-qty').value)||0;
+  const kcal=parseFloat(document.getElementById('f-kcal').value)||0;
+  const protein=parseFloat(document.getElementById('f-p').value)||0;
+  const carbs=parseFloat(document.getElementById('f-c').value)||0;
+  const fat=parseFloat(document.getElementById('f-fat').value)||0;
+  DB.foodEntries.push({
+    id:uid(), date:todayStr(), time:document.getElementById('f-time').value||nowTime(),
+    meal:document.getElementById('f-meal').value, name, qty,
+    unit:document.getElementById('f-unit').value, kcal, protein, carbs, fat,
+    source:'Cadastro manual do usuário', confidence:'DEPENDENTE DO USUÁRIO'
+  });
+  // salva também como alimento reutilizável (por 100g), se possível estimar
+  if(qty>0){
+    DB.userFoods.push({id:uid(), name, category:'Personalizado', barcode:null,
+      per100:{kcal:round1(kcal/qty*100), protein:round1(protein/qty*100), carbs:round1(carbs/qty*100), fat:round1(fat/qty*100), fiber:null},
+      source:'Cadastro manual do usuário', confidence:'DEPENDENTE DO USUÁRIO'});
+  }
+  saveDB(); closeModal(); renderAll();
+}
+function deleteFood(id){ DB.foodEntries=DB.foodEntries.filter(e=>e.id!==id); saveDB(); renderAll(); }
+
+function openWeightModal(){
+  openModal(`
+    <h2>Registrar peso</h2>
+    <label>Peso (kg)</label><input id="w-val" type="number" step="0.1" placeholder="91.8">
+    <label>Data</label><input id="w-date" type="date" value="${todayStr()}">
+    <button class="btn" onclick="saveWeight()">Salvar</button>
+  `);
+}
+function saveWeight(){
+  const v=parseFloat(document.getElementById('w-val').value);
+  if(!v){ alert('Informe um peso válido'); return; }
+  const date=document.getElementById('w-date').value||todayStr();
+  DB.weightEntries=DB.weightEntries.filter(e=>e.date!==date);
+  DB.weightEntries.push({id:uid(),date,weight:v});
+  saveDB(); closeModal(); renderAll();
+}
+
+function openSetModal(){
+  openModal(`
+    <h2>Registrar série</h2>
+    <label>Exercício</label><input id="s-ex" placeholder="Ex: Smith Squat">
+    <div class="grid2">
+      <div><label>Carga (kg)</label><input id="s-w" type="number" placeholder="105"></div>
+      <div><label>Repetições</label><input id="s-r" type="number" placeholder="8"></div>
+    </div>
+    <label>Tipo de série</label>
+    <select id="s-type"><option>Válida</option><option>Preparatória</option><option>Aquecimento</option><option>Falha</option><option>Cluster</option><option>Drop</option><option>Rest-pause</option></select>
+    <button class="btn" onclick="saveSet()">Salvar</button>
+  `);
+}
+function saveSet(){
+  const ex=document.getElementById('s-ex').value.trim();
+  if(!ex){ alert('Informe o exercício'); return; }
+  DB.workoutSets.push({
+    id:uid(), date:todayStr(), exercise:ex,
+    weight:parseFloat(document.getElementById('s-w').value)||0,
+    reps:parseFloat(document.getElementById('s-r').value)||0,
+    type:document.getElementById('s-type').value,
+  });
+  saveDB(); closeModal(); renderAll();
+}
+
+function openSleepModal(){
+  openModal(`<h2>Registrar sono</h2>
+    <label>Horas dormidas</label><input id="sl-h" type="number" step="0.1" placeholder="6.5">
+    <label>Qualidade</label><select id="sl-q"><option>boa</option><option>média</option><option>baixa</option></select>
+    <button class="btn" onclick="saveSleep()">Salvar</button>`);
+}
+function saveSleep(){
+  const h=parseFloat(document.getElementById('sl-h').value);
+  if(!h){alert('Informe as horas de sono');return;}
+  DB.sleepEntries=DB.sleepEntries.filter(e=>e.date!==todayStr());
+  DB.sleepEntries.push({id:uid(),date:todayStr(),hours:h,quality:document.getElementById('sl-q').value});
+  saveDB(); closeModal(); renderAll();
+}
+function openWaterModal(){
+  openModal(`<h2>Registrar água</h2>
+    <label>Litros consumidos hoje (total)</label><input id="wa-l" type="number" step="0.1" value="${fmt1(todayWater())}">
+    <button class="btn" onclick="saveWater()">Salvar</button>`);
+}
+function saveWater(){
+  const l=parseFloat(document.getElementById('wa-l').value)||0;
+  DB.hydrationEntries=DB.hydrationEntries.filter(e=>e.date!==todayStr());
+  DB.hydrationEntries.push({id:uid(),date:todayStr(),liters:l});
+  saveDB(); closeModal(); renderAll();
+}
+function openStepsModal(){
+  openModal(`<h2>Registrar passos</h2>
+    <label>Total de passos hoje</label><input id="st-v" type="number" value="${fmt0(todaySteps())}">
+    <button class="btn" onclick="saveSteps()">Salvar</button>`);
+}
+function saveSteps(){
+  const v=parseFloat(document.getElementById('st-v').value)||0;
+  DB.stepsEntries=DB.stepsEntries.filter(e=>e.date!==todayStr());
+  DB.stepsEntries.push({id:uid(),date:todayStr(),steps:v});
+  saveDB(); closeModal(); renderAll();
+}
+function openRunModal(){
+  const shoeOptions = (DB.shoes||[]).map(s=>`<option value="${s.id}">${s.brand} ${s.model}</option>`).join('');
+  openModal(`<h2>Registrar corrida</h2>
+    <label>Tipo</label><select id="rn-type"><option>Fácil</option><option>Tempo run</option><option>Intervalado</option><option>Tiros</option><option>Longão</option><option>Recuperação</option></select>
+    <div class="grid2">
+      <div><label>Distância (km)</label><input id="rn-dist" type="number" step="0.1" placeholder="6"></div>
+      <div><label>Duração (min)</label><input id="rn-dur" type="number" placeholder="32"></div>
+    </div>
+    <label>Tênis</label>
+    <select id="rn-shoe"><option value="">Nenhum / não informar</option>${shoeOptions}</select>
+    <label>Notas</label><input id="rn-notes" placeholder="Ex: esteira 18km/h">
+    <button class="btn" onclick="saveRun()">Salvar</button>`);
+}
+function saveRun(){
+  const dist=parseFloat(document.getElementById('rn-dist').value)||0;
+  const dur=parseFloat(document.getElementById('rn-dur').value)||0;
+  if(!dist||!dur){alert('Informe distância e duração');return;}
+  DB.runningEntries.push({id:uid(),date:todayStr(),type:document.getElementById('rn-type').value,distance:dist,duration:dur,
+    notes:document.getElementById('rn-notes').value, shoeId:document.getElementById('rn-shoe').value||null});
+  saveDB(); closeModal(); renderAll();
+}
+function deleteRun(id){ DB.runningEntries=DB.runningEntries.filter(e=>e.id!==id); saveDB(); renderAll(); }
+
+function openShoeModal(){
+  openModal(`<h2>Cadastrar tênis</h2>
+    <label>Buscar modelo</label>
+    <input id="sh-search" placeholder="Ex: Pegasus, Vaporfly..." oninput="renderShoeResults()">
+    <div id="shoe-results"></div>
+    <p style="font-size:11.5px;color:var(--sub);margin:8px 0;">Busca na base local de modelos. Sem backend não há consulta de imagem/fabricante em tempo real — foto fica opcional.</p>
+    <button class="btn ghost" onclick="foodless_manualShoe()">Não encontrei — cadastrar manualmente</button>
+    <div id="shoe-manual" style="display:none;margin-top:10px;">
+      <label>Marca</label><input id="sm-brand" placeholder="Ex: Nike">
+      <label>Modelo</label><input id="sm-model" placeholder="Ex: Pegasus 41">
+      <label>Alertar a partir de (km)</label><input id="sm-alert" type="number" value="600">
+      <button class="btn" onclick="saveShoeManual()">Salvar tênis</button>
+    </div>`);
+  renderShoeResults();
+}
+function foodless_manualShoe(){ document.getElementById('shoe-manual').style.display='block'; }
+function renderShoeResults(){
+  const q=(document.getElementById('sh-search')?.value)||'';
+  const results = shoeSearch(q);
+  document.getElementById('shoe-results').innerHTML = results.map(s=>`<div class="row" style="cursor:pointer" onclick='saveShoeFromDb(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+    <div><b>${s.model}</b><div class="sub">${s.brand} · ${s.weightG}g · drop ${s.drop} · ${s.category}</div></div>
+    <span class="tag">usar</span></div>`).join('');
+}
+function saveShoeFromDb(s){
+  DB.shoes.push({id:uid(), brand:s.brand, model:s.model, weightG:s.weightG, drop:s.drop, category:s.category,
+    purchaseDate:todayStr(), initialKm:0, alertKm:600, status:'ATIVO'});
+  saveDB(); closeModal(); renderAll();
+}
+function saveShoeManual(){
+  const brand=document.getElementById('sm-brand').value.trim(); const model=document.getElementById('sm-model').value.trim();
+  if(!brand||!model){alert('Informe marca e modelo');return;}
+  DB.shoes.push({id:uid(), brand, model, weightG:null, drop:null, category:null,
+    purchaseDate:todayStr(), initialKm:0, alertKm:parseFloat(document.getElementById('sm-alert').value)||600, status:'ATIVO'});
+  saveDB(); closeModal(); renderAll();
+}
+function deleteShoe(id){ DB.shoes=DB.shoes.filter(s=>s.id!==id); saveDB(); renderAll(); }
+
+function openMeasureModal(){
+  const l=latestMeasurement()||{};
+  openModal(`<h2>Registrar medidas</h2>
+    <div class="grid2">
+      <div><label>Cintura (cm)</label><input id="m-waist" type="number" step="0.1" value="${l.waist||''}"></div>
+      <div><label>Braço (cm)</label><input id="m-arm" type="number" step="0.1" value="${l.arm||''}"></div>
+      <div><label>Peito (cm)</label><input id="m-chest" type="number" step="0.1" value="${l.chest||''}"></div>
+      <div><label>Quadril (cm)</label><input id="m-hip" type="number" step="0.1" value="${l.hip||''}"></div>
+      <div><label>Coxa (cm)</label><input id="m-thigh" type="number" step="0.1" value="${l.thigh||''}"></div>
+      <div><label>Panturrilha (cm)</label><input id="m-calf" type="number" step="0.1" value="${l.calf||''}"></div>
+    </div>
+    <button class="btn" onclick="saveMeasure()">Salvar</button>`);
+}
+function saveMeasure(){
+  const val=id=>parseFloat(document.getElementById(id).value)||null;
+  DB.measurements = DB.measurements.filter(m=>m.date!==todayStr());
+  DB.measurements.push({id:uid(),date:todayStr(),waist:val('m-waist'),arm:val('m-arm'),chest:val('m-chest'),hip:val('m-hip'),thigh:val('m-thigh'),calf:val('m-calf')});
+  saveDB(); closeModal(); renderAll();
+}
+
+/* ---------- INIT ---------- */
+renderAll();
+</script>
+</body>
+</html>
